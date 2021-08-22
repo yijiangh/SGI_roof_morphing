@@ -1,5 +1,12 @@
-function [U] = linear_blend_skinning(V, T, W)
+function [U] = linear_blend_skinning(V, TR, W)
 %%%%%%%%%%
+% Inputs:
+%   V: vertex positions: #V x 3
+%   TR: (#dim by #dim+1) by #P+#BE list of transformations, where TR(1:2,3,i) is 
+%    the translation for control handle i and TR(1:2,1:2,i) is the 
+%    rotation/scale for control handle i
+%   W: weight matrix: #V x #handles
+% 
 % TASK: implement linear blend skinning
 %
 % optional CHALLENGE: implement a faster linear blend skinning without 
@@ -23,6 +30,16 @@ function [U] = linear_blend_skinning(V, T, W)
 %%%%%%%%%%
 
 % naive closest point (replace this one with your solution)
-U = V;
+U = zeros(size(V));
+
+for i=1:size(U,1)
+    % i: vertex index
+    vi = V(i,:)';
+    for j=1:size(W,2)
+        % j: handle index
+        wvj = W(i,j)*TR(1:2,1:3,j)*[vi;1];
+        U(i,:) = U(i,:) + wvj';
+    end
+end
 
 end

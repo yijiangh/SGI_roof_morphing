@@ -27,7 +27,7 @@ for ii = 1:size(C,1)
     D(:,ii) = sqrt(sum((V - C(ii,:)).^2,2));
 end
 
-% geet handle indices b
+% get handle indices b
 [~,b] = min(D);
 
 % TODO: (unbounded) biharmonic weights
