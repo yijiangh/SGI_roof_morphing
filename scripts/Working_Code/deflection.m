@@ -3,13 +3,7 @@ function [model, u] = deflection(V, F)
 %   Detailed explanation goes here
 
 model = createpde(2);
-
-pts = find_boundary_loop(V, F);
-
-gdm = [2, length(pts), pts(:,1)', pts(:,2)']';
-
-g = decsg(gdm,'S1', ('S1')');
-geometryFromEdges(model,g);
+geometryFromMesh(model,V',F');
 
 E = 1.0e6; % Modulus of elasticity
 nu = 0.3; % Poisson's ratio
@@ -24,22 +18,12 @@ f = [0 pres]';
 specifyCoefficients(model,'m',0,'d',0,'c',c,'a',a,'f',f);
 
 k = 1e7;
-
-bOuter = applyBoundaryCondition(model,'neumann','Edge',(1:length(pts)),...
+numEdges = model.Geometry.NumEdges;
+bOuter = applyBoundaryCondition(model,'neumann','Edge',(1:numEdges),...
                                      'g',[0 0],'q',[0 0; k 0]);
-                                 
-generateMesh(model);
 
 res = solvepde(model);
-
 u = res.NodalSolution;
-
-numNodes = size(model.Mesh.Nodes,2);
-%pdeplot(model,'XYData',u(:,1),'Contour','on')
-%drawnow();
-
-numNodes = size(model.Mesh.Nodes,2);
-wMax = min(u(1:numNodes,1));
 
 end
 
