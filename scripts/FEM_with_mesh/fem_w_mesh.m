@@ -27,6 +27,11 @@ pres = 2; % external pressure
 %% Use our own mesh
 meshPath = '../data/woody.obj';
 [V,F] = readOBJ(meshPath);
+
+% figure;
+% fig = tsurf(F,V);
+% axis equal;
+
 V = V(:,1:2); % the input mesh contains redundant zero third column
 geometryFromMesh(model,V',F');
 
@@ -34,8 +39,9 @@ geometryFromMesh(model,V',F');
 % Plot the geometry and display the edge labels for use in the boundary 
 % condition definition.
 
-figure; 
-pdegplot(model,'EdgeLabels','on');
+figure;
+% pdeplot(model)
+pdegplot(model,'EdgeLabels','on','VertexLabels','on');
 ylim([-1,11])
 axis equal
 title 'Geometry With Edge Labels Displayed';
@@ -52,7 +58,10 @@ k = 1e7; % spring stiffness
 % Define distributed springs on all four edges.
 
 % 1:10 is the edge label shown in the figure above
-bOuter = applyBoundaryCondition(model,'neumann','Edge',[1:10],...
+% bOuter = applyBoundaryCondition(model,'neumann','Edge',[2,3,9],...
+%                                      'g',[0 0],'q',[0 0; k 0]);
+
+bOuter = applyBoundaryCondition(model,'neumann','Vertex',1:2,...
                                      'g',[0 0],'q',[0 0; k 0]);
                                  
 % bOuter = applyBoundaryCondition(model,'dirichlet','Edge',(1:4),...
@@ -66,7 +75,6 @@ bOuter = applyBoundaryCondition(model,'neumann','Edge',[1:10],...
 % toc
 
 %%
-pdeplot(model)
 
 tic
 res = solvepde(model);
